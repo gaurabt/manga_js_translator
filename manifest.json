@@ -1,8 +1,7 @@
 {
   "name": "Manga JS Translator",
   "version": "1.0",
-  "manifest_version": 2,
-  "content_security_policy": "script-src 'self' 'unsafe-eval' blob:; object-src 'self'",
+  "manifest_version": 3,
   "permissions": [
     "tabs",
     "storage",
@@ -11,22 +10,24 @@
     "webRequestBlocking",
     "https://www.deepl.com/*"
   ],
-  "background": {
-    "page": "background.html",
-    "persistent": true
+  "action": {
+    "default_popup": "popup.html"
   },
-  "sandbox": {
-    "pages": [
-      "sandbox.html"
-    ],
-    "content_security_policy": "sandbox allow-scripts allow-forms allow-popups allow-modals allow-storage-access-by-user-activation; script-src 'self' 'unsafe-inline' 'unsafe-eval'; child-src 'self'; worker-src 'self' blob:;"
+  "host_permissions": [
+    "https://mangaraw.org/*/*/*",
+    "https://exhentai.org/s/*",
+    "https://e-hentai.org/s/*",
+    "https://nhentai.net/g/*/*/*",
+    "https://www.wnacg.org/photos-view-id-*"
+  ],
+  "background": {
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
-    "matches": ["*://*/*"],
-    "include_globs": ["https://mangaraw.org/*/*/*","https://exhentai.org/s/*","https://e-hentai.org/s/*","https://nhentai.net/g/*/*/*","https://www.wnacg.org/photos-view-id-*"],
-    "js": ["js/content_script.js"],
-    "run_at": "document_end"
+      "matches": ["*://*/*"],
+      "js": ["js/content_script.js"],
+      "run_at": "document_end"
     },
     {
       "matches": ["https://www.bing.com/translator/*"],
@@ -41,11 +42,10 @@
       "run_at": "document_end"
     }
   ],
-  "browser_action": {
-    "default_popup": "popup.html"
-  },
   "web_accessible_resources": [
-    "js/*.js",
-    "traineddata/*.traineddata.gz"
-  ]  
+    {
+      "resources": ["js/*.js", "traineddata/*.traineddata.gz"],
+      "matches": ["*://*/*"]
+    }
+  ]
 }
